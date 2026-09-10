@@ -1,4 +1,4 @@
 # sql-postgis
 
 Requêtes SQL et PostGIS — apprentissage.
-Données : (nom de ta couche, source IGN / OSM).
+Données : Admin Express COG Carto (IGN) — communes de Haute-Garonne.
