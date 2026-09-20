@@ -2,10 +2,11 @@
 
 Requêtes SQL et PostGIS — apprentissage.
 Données : Admin Express COG Carto (IGN) — communes de Haute-Garonne.
+Premières requêtes : count, ST_Area, agrégation par département.
 
 ## À faire
 
-Premières requêtes : count, ST_Area, agrégation par département.
+« Jointure spatiale — télécharger une couche de points (BAN ou OSM) ».
 
 ## Notes
 
