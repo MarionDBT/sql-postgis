@@ -38,3 +38,37 @@ ORDER BY "INSEE_DEP", "POPULATION" DESC;
 -- • Nombre de communes de plus de 10 000 habitants par département (WHERE + GROUP BY).
 -- • Communes de Haute-Garonne de moins de 500 habitants.
 -- • Communes dont le nom commence par « Saint » (trouver l'opérateur).
+
+-- =====================================================
+-- 2026-09-23 — WHERE + GROUP BY, AND, LIKE
+-- =====================================================
+
+-- 1. Nombre de communes de plus de 10 000 habitants par département
+SELECT "INSEE_DEP",
+       count("NOM") AS nb_communes
+FROM raw.commune
+WHERE "POPULATION" > 10000
+GROUP BY "INSEE_DEP"
+ORDER BY "INSEE_DEP";
+
+-- 2. Communes de Haute-Garonne de moins de 500 habitants
+-- Deux conditions combinées avec AND. Pas de regroupement : une ligne par commune.
+SELECT "NOM", "POPULATION"
+FROM raw.commune
+WHERE "INSEE_DEP" = '31' AND "POPULATION" < 500
+ORDER BY "POPULATION";
+
+-- 3. Communes dont le nom commence par « Saint »
+-- LIKE cherche un motif ; % remplace n'importe quelle suite de caractères.
+-- LIKE est sensible à la casse ; ILIKE (PostgreSQL) ne l'est pas.
+SELECT "NOM", "INSEE_DEP"
+FROM raw.commune
+WHERE "NOM" LIKE 'Saint%'
+ORDER BY "INSEE_DEP";
+
+-- À retenir
+-- • FROM avant WHERE : on ouvre le carton avant de trier.
+-- • HAVING seulement pour filtrer sur une agrégation (count, sum, avg).
+--   Un filtre sur une colonne simple va dans WHERE.
+
+
