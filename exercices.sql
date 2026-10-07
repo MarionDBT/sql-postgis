@@ -142,6 +142,40 @@ SELECT name, population/area
   FROM world
  WHERE name IN ('China', 'Nigeria', 'France', 'Australia')
 
+-- 2026-10-07 — SQLZoo : SELECT basics (QCM, rien à copier)
+
+--Division calcul du PIB- le nom et le pib par habitant pour les pays ayant une population supérieure ou égale à 200 millions.
+SELECT name, GDP/population as GDP 
+FROM world
+WHERE population >= 200000000
+
+--le nom et la population en millions pour les pays d'Amérique du sud
+SELECT name, population/1000000 as population
+from world
+Where continent like 'South America'
+
+--le nom et la population pour la France, l'Allemagne et l'Italie
+SELECT name, population
+FROM world
+where name IN ('France', 'Germany', 'Italy')
+
+--le nom des pays contenant 'United'
+SELECT name
+FROM world 
+where name like '%United%'
+
+--les pays dont l'aire est supérieure à 3m et la population est supérieure à 250m
+SELECT name, population, area
+FROM world
+where area > 3000000 OR population > 250000000
+
+--Les pays dont l'aire est supérieur à 3m OU la population est sup à 250m mais pas les deux.
+SELECT name, population, area 
+FROM world
+where (population>250000000) XOR (area>3000000)
+
+
+
 
 
 
