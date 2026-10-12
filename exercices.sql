@@ -174,6 +174,69 @@ SELECT name, population, area
 FROM world
 where (population>250000000) XOR (area>3000000)
 
+-- =====================================================
+-- 2026-10-12 — Révision des jointures
+-- Réécriture à froid, 4 jours après la séance du 08/10
+-- =====================================================
+
+-- 1. Nombre d'adresses par commune (jointure attributaire)
+SELECT c."NOM",
+       count(a.id) AS nb_adresses
+FROM raw.commune c
+JOIN raw.adresses a ON c."INSEE_COM" = a.code_insee
+GROUP BY c."NOM"
+ORDER BY nb_adresses DESC
+LIMIT 20;
+
+-- 2. Nombre d'adresses dans une commune donnée
+-- count() compte, il ne filtre pas : le filtre va dans le WHERE, une seule fois.
+SELECT c."NOM",
+       count(a.id) AS nb_adresses
+FROM raw.commune c
+JOIN raw.adresses a ON c."INSEE_COM" = a.code_insee
+WHERE c."NOM" = 'Pibrac'
+GROUP BY c."NOM";
+
+-- 3. Adresses et population par commune de Haute-Garonne
+-- POPULATION doit être dans le GROUP BY : toute colonne du SELECT qui n'est
+-- pas agrégée doit y figurer.
+SELECT c."NOM",
+       c."POPULATION",
+       count(a.id) AS nb_adresses
+FROM raw.commune c
+JOIN raw.adresses a ON c."INSEE_COM" = a.code_insee
+WHERE c."INSEE_DEP" = '31'
+GROUP BY c."NOM", c."POPULATION"
+ORDER BY nb_adresses DESC;
+
+-- 4. Communes de plus de 1 000 adresses et moins de 5 000 habitants
+-- Deux conditions, deux emplacements différents :
+--   population      → colonne simple, pas d'agrégation → WHERE
+--   nombre d'adresses → produit par count()            → HAVING
+SELECT c."NOM",
+       c."POPULATION",
+       count(a.id) AS nb_adresses
+FROM raw.commune c
+JOIN raw.adresses a ON c."INSEE_COM" = a.code_insee
+WHERE c."POPULATION" < 5000
+GROUP BY c."NOM", c."POPULATION"
+HAVING count(a.id) > 1000
+ORDER BY nb_adresses DESC;
+
+-- À retenir
+-- • Ordre RÉEL d'exécution : FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY
+--   Le SELECT arrive en avant-dernier, donc un alias est utilisable dans
+--   ORDER BY mais jamais dans WHERE ni HAVING. Dans le HAVING, on réécrit
+--   count(a.id) en entier.
+-- • Guillemets doubles pour les identifiants ("INSEE_COM"), apostrophes
+--   simples pour les valeurs ('31').
+-- • LIKE sans % équivaut à = : réserver LIKE aux motifs.
+-- • Regrouper sur l'identifiant (INSEE_COM) plutôt que sur le libellé :
+--   deux communes peuvent porter le même nom.
+-- • Erreur « entrée manquante de la clause FROM pour la table a » :
+--   l'alias n'est pas déclaré, ou seule une partie de la requête est
+--   sélectionnée dans l'éditeur.
+
 
 
 
